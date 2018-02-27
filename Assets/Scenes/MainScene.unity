@@ -573,8 +573,8 @@ MonoBehaviour:
   resetButton: {fileID: 1207915671}
   input: {fileID: 2115074444}
   limits:
-    highSpeed: 25
-    lowSpeed: 70
+    highSpeed: 100
+    lowSpeed: 150
 --- !u!4 &564895065
 Transform:
   m_ObjectHideFlags: 0

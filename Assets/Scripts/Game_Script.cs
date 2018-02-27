@@ -69,10 +69,11 @@ public class		Game_Script : MonoBehaviour {
 		tmp_item = Instantiate(item_pref, new Vector3(), Quaternion.identity);
 		tmp_item.GetComponentInChildren<Text>().text = word[i].ToString();
 		tmp_item.transform.SetParent(canvas);
-		GenerateAndSetPath(tmp_item.GetComponent<ItemBehaviour>());
+		GenerateAndSetPath(tmp_item.GetComponent<ItemBehaviour>(), i);
 		tmp_item.transform.position = new Vector3(60 + i * 60, 60 + i * 60, 0);
 		tmp_item.GetComponent<ItemBehaviour>().goTo = tmp.transform;
 		tmp_item.GetComponent<ItemBehaviour>().SetSpeed(Rand.Range(limits.lowSpeed, limits.highSpeed));
+		tmp_item.gameObject.name = "Item_" + word[i].ToString();
 		tmp.transform.SetParent(inputPanel.transform);
 		return (tmp);
 	}
@@ -90,12 +91,13 @@ public class		Game_Script : MonoBehaviour {
 			return (current = chars.Count == 1 ? chars.Peek() : chars.Pop());
 		return (false);
 	}
-	private void		GenerateAndSetPath(ItemBehaviour item)
+	private void		GenerateAndSetPath(ItemBehaviour item, int z)
 	{
 		PathScript		scr;
 		GameObject		path;
 
 		path = Instantiate(path_pref, new Vector3(), Quaternion.identity);
+		path.name = "Path_for:  " + word[z];
 		path.transform.SetParent(canvas);
 		path.transform.position = new Vector3(halfCanvasWidth, halfCanvasHeigth, 0);
 		scr = path.GetComponent<PathScript>();

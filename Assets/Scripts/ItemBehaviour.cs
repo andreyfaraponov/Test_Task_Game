@@ -6,21 +6,22 @@ using System;
 using System.Linq;
 
 using SRandom = System.Random;
+using URandom = UnityEngine.Random;
 
 public class ItemBehaviour : MonoBehaviour {
 	public Transform		goTo;
 	public GameObject		path;
-	private float			speed;
+	public float			speed;
 	bool					goToPlace;
 	GameObject				currentCheckPoint;
 	Game_Script				gameController;
 	private GameObject[]	points;
-	string					sign;
+	public string					sign;
 	int						index;
 
 	void			Start()
 	{
-		speed = 20f;
+		index = (int)URandom.Range(0, 3);
 		goToPlace = false;
 		currentCheckPoint = null;
 		gameController = GameObject.FindWithTag("GameController").GetComponent<Game_Script>();
