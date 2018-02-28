@@ -8,31 +8,26 @@ using System.Linq;
 using SRandom = System.Random;
 
 public class ItemBehaviour : MonoBehaviour {
-	public Transform		goTo;
-	public GameObject		path;
-	private float			speed;
-	bool					goToPlace;
-	GameObject				currentCheckPoint;
-	Game_Script				gameController;
-	private GameObject[]	points;
-	string					sign;
-	int						index;
+	public Transform placePosition;
+	public float speed = 20f;
+	private bool goToPlace;
+	private GameObject currentCheckPoint;
+	private Game_Script gameController;
+	public GameObject[] points;
+	private int index;
+	public int placeHolderHash { private get; set; }
 
-	void			Start()
+	void Start()
 	{
-		speed = 20f;
-		goToPlace = false;
-		currentCheckPoint = null;
 		gameController = GameObject.FindWithTag("GameController").GetComponent<Game_Script>();
-		sign = gameObject.GetComponentInChildren<Text>().text;
-		TryToGo();
+		GoOnByCheckpoints();
 	}
-	void			FixedUpdate()
+	void FixedUpdate()
 	{
 		if (goToPlace)
 		{
-			transform.position = Vector3.Lerp(transform.position, goTo.position, 0.1f);
-			if (Vector3.Distance(transform.position, goTo.position) < 0.1f)
+			transform.position = Vector3.Lerp(transform.position, placePosition.position, 0.1f);
+			if (Vector3.Distance(transform.position, placePosition.position) < 0.1f)
 				goToPlace = false;
 		}
 		else if (currentCheckPoint)
@@ -46,31 +41,26 @@ public class ItemBehaviour : MonoBehaviour {
 			}
 		}
 	}
-	public void		SetSpeed(float speed)
+	public void SetSpeed(float speed)
 	{
 		this.speed = speed;
 	}
-	void			OnTriggerEnter2D(Collider2D other)
+	void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.CompareTag("Player") && other.GetComponent<PlayerMove>().IsMove() &&
-			gameController.CheckAndMoveCurrent(sign))
+			gameController.CheckAndMoveCurrent(placeHolderHash))
 		{
 			gameObject.GetComponent<Collider2D>().enabled = false;
 			currentCheckPoint = null;
 			goToPlace = true;
 		}
 	}
-	public void		TryToGo()
+	public void GoOnByCheckpoints()
 	{
-		GameObject[]	tmp;
-		SRandom			rnd;
+		SRandom rnd;
 
-		if (path)
-		{
-			tmp = path.GetComponent<PathScript>().points;
-			rnd = new SRandom();
-			points = tmp.OrderBy(x => rnd.Next()).ToArray();
-			currentCheckPoint = points[index];
-		}
+		rnd = new SRandom();
+		points = points.OrderBy(x => rnd.Next()).ToArray();
+		currentCheckPoint = points[index];
 	}
 }

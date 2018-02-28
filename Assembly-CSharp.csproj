@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Game_Script.cs" />
+     <Compile Include="Assets\Scripts\GizmosScript.cs" />
      <Compile Include="Assets\Scripts\ItemBehaviour.cs" />
      <Compile Include="Assets\Scripts\PathScript.cs" />
      <Compile Include="Assets\Scripts\PlayerMove.cs" />
