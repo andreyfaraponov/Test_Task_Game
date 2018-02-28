@@ -54,7 +54,7 @@
      <Compile Include="Assets\Scripts\Game_Script.cs" />
      <Compile Include="Assets\Scripts\GizmosScript.cs" />
      <Compile Include="Assets\Scripts\ItemBehaviour.cs" />
-     <Compile Include="Assets\Scripts\PathScript.cs" />
+     <Compile Include="Assets\Scripts\PathEditor.cs" />
      <Compile Include="Assets\Scripts\PlayerMove.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/home/standrewom/unity2017Editor/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

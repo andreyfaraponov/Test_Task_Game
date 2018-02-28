@@ -14,14 +14,19 @@ public class ItemBehaviour : MonoBehaviour {
 	private GameObject currentCheckPoint;
 	private Game_Script gameController;
 	public GameObject[] points;
-	private int index;
+	private int currentPointIndex;
 	public int placeHolderHash { private get; set; }
-
+	/// <summary>
+	/// Find and Get GameController Game_Script
+	/// </summary>
 	void Start()
 	{
 		gameController = GameObject.FindWithTag("GameController").GetComponent<Game_Script>();
 		GoOnByCheckpoints();
 	}
+	/// <summary>
+	/// Product of motion between path points or placeholder in inputPanel
+	/// </summary>
 	void FixedUpdate()
 	{
 		if (goToPlace)
@@ -36,18 +41,27 @@ public class ItemBehaviour : MonoBehaviour {
 				speed * Time.deltaTime * 10f;
 			if (Vector3.Distance(transform.position, currentCheckPoint.transform.position) < 20f)
 			{
-				index = (index + 1) < points.Length ? (index + 1) : 0;
-				currentCheckPoint = points[index];
+				currentPointIndex = (currentPointIndex + 1) < points.Length ? (currentPointIndex + 1) : 0;
+				currentCheckPoint = points[currentPointIndex];
 			}
 		}
 	}
-	public void SetSpeed(float speed)
+	/// <summary>
+	/// Change of speed between points
+	/// </summary>
+	/// <param name="newSpeed">new speed for motion between path points</param>
+	public void SetSpeed(float newSpeed)
 	{
-		this.speed = speed;
+		this.speed = newSpeed;
 	}
-	void OnTriggerEnter2D(Collider2D other)
+	/// <summary>
+	/// Checking the player collision with letter and
+	/// current need letter in inputPanel
+	/// </summary>
+	/// <param name="collisionObj"></param>
+	void OnTriggerEnter2D(Collider2D collisionObj)
 	{
-		if (other.CompareTag("Player") && other.GetComponent<PlayerMove>().IsMove() &&
+		if (collisionObj.CompareTag("Player") && collisionObj.GetComponent<PlayerMove>().isMove &&
 			gameController.CheckAndMoveCurrent(placeHolderHash))
 		{
 			gameObject.GetComponent<Collider2D>().enabled = false;
@@ -55,12 +69,16 @@ public class ItemBehaviour : MonoBehaviour {
 			goToPlace = true;
 		}
 	}
+	/// <summary>
+	/// Start Letter move by its checkpoints
+	/// with the first random point
+	/// </summary>
 	public void GoOnByCheckpoints()
 	{
 		SRandom rnd;
 
 		rnd = new SRandom();
 		points = points.OrderBy(x => rnd.Next()).ToArray();
-		currentCheckPoint = points[index];
+		currentCheckPoint = points[currentPointIndex];
 	}
 }
