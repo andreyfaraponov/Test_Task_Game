@@ -9,31 +9,30 @@ using SRandom = System.Random;
 using URandom = UnityEngine.Random;
 
 public class ItemBehaviour : MonoBehaviour {
-	public Transform		goTo;
-	public GameObject		path;
-	public float			speed;
-	bool					goToPlace;
-	GameObject				currentCheckPoint;
-	Game_Script				gameController;
-	private GameObject[]	points;
-	public string					sign;
-	int						index;
-
-	void			Start()
+	private Transform placePosition;
+	public float speed = 20f;
+	private bool goToPlace;
+	private GameObject currentCheckPoint;
+	private Game_Script gameController;
+	public GameObject[] points;
+	private int currentPointIndex;
+	/// <summary>
+	/// Find and Get GameController Game_Script
+	/// </summary>
+	void Start()
 	{
-		index = (int)URandom.Range(0, 3);
-		goToPlace = false;
-		currentCheckPoint = null;
 		gameController = GameObject.FindWithTag("GameController").GetComponent<Game_Script>();
-		sign = gameObject.GetComponentInChildren<Text>().text;
-		TryToGo();
+		GoOnByCheckpoints();
 	}
-	void			FixedUpdate()
+	/// <summary>
+	/// Product of motion between path points or placeholder in inputPanel
+	/// </summary>
+	void FixedUpdate()
 	{
 		if (goToPlace)
 		{
-			transform.position = Vector3.Lerp(transform.position, goTo.position, 0.1f);
-			if (Vector3.Distance(transform.position, goTo.position) < 0.1f)
+			transform.position = Vector3.Lerp(transform.position, placePosition.position, 0.1f);
+			if (Vector3.Distance(transform.position, placePosition.position) < 0.1f)
 				goToPlace = false;
 		}
 		else if (currentCheckPoint)
@@ -42,36 +41,44 @@ public class ItemBehaviour : MonoBehaviour {
 				speed * Time.deltaTime * 10f;
 			if (Vector3.Distance(transform.position, currentCheckPoint.transform.position) < 20f)
 			{
-				index = (index + 1) < points.Length ? (index + 1) : 0;
-				currentCheckPoint = points[index];
+				currentPointIndex = (currentPointIndex + 1) < points.Length ? (currentPointIndex + 1) : 0;
+				currentCheckPoint = points[currentPointIndex];
 			}
 		}
 	}
-	public void		SetSpeed(float speed)
+	/// <summary>
+	/// Change of speed between points
+	/// </summary>
+	/// <param name="newSpeed">new speed for motion between path points</param>
+	public void SetSpeed(float newSpeed)
 	{
-		this.speed = speed;
+		this.speed = newSpeed;
 	}
-	void			OnTriggerEnter2D(Collider2D other)
+	/// <summary>
+	/// Checking the player collision with letter and
+	/// current need letter in inputPanel
+	/// </summary>
+	/// <param name="collisionObj"></param>
+	void OnTriggerEnter2D(Collider2D collisionObj)
 	{
-		if (other.CompareTag("Player") && other.GetComponent<PlayerMove>().IsMove() &&
-			gameController.CheckAndMoveCurrent(sign))
+		if (collisionObj.CompareTag("Player") && collisionObj.GetComponent<PlayerMove>().isMove &&
+			(placePosition = gameController.CheckAndMoveCurrent(gameObject.GetComponentInChildren<Text>().text)))
 		{
 			gameObject.GetComponent<Collider2D>().enabled = false;
 			currentCheckPoint = null;
 			goToPlace = true;
 		}
 	}
-	public void		TryToGo()
+	/// <summary>
+	/// Start Letter move by its checkpoints
+	/// with the first random point
+	/// </summary>
+	public void GoOnByCheckpoints()
 	{
-		GameObject[]	tmp;
-		SRandom			rnd;
+		SRandom rnd;
 
-		if (path)
-		{
-			tmp = path.GetComponent<PathScript>().points;
-			rnd = new SRandom();
-			points = tmp.OrderBy(x => rnd.Next()).ToArray();
-			currentCheckPoint = points[index];
-		}
+		rnd = new SRandom();
+		points = points.OrderBy(x => rnd.Next()).ToArray();
+		currentCheckPoint = points[currentPointIndex];
 	}
 }
